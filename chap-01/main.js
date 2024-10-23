@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import gsap from "gsap";
 
 const canvas = document.getElementById("canvas");
 
@@ -27,20 +28,20 @@ scene.add(group);
 
 const cube1 = new THREE.Mesh(
   new THREE.BoxGeometry(1, 1, 1),
-  new THREE.MeshBasicMaterial({ color: 0xff0000 })
+  new THREE.MeshBasicMaterial({ color: 0xffffff })
 );
 
 const cube2 = new THREE.Mesh(
   new THREE.BoxGeometry(1, 1, 1),
-  new THREE.MeshBasicMaterial({ color: 0x00ff00 })
+  new THREE.MeshBasicMaterial({ color: 0xffffff })
 );
-cube2.position.x = 2;
+cube2.position.x = 1.2;
 
 const cube3 = new THREE.Mesh(
   new THREE.BoxGeometry(1, 1, 1),
-  new THREE.MeshBasicMaterial({ color: 0x0000ff })
+  new THREE.MeshBasicMaterial({ color: 0xffffff })
 );
-cube3.position.x = -2;
+cube3.position.x = -1.2;
 
 group.add(cube1, cube2, cube3);
 
@@ -60,7 +61,39 @@ const renderer = new THREE.WebGLRenderer(
 );
 
 renderer.setSize(sizes.width, sizes.height);
-group.position.y = 1;
-group.scale.x = 2;
-group.rotation.z = Math.PI * 0.25;
+
 renderer.render(scene, camera);
+
+const clock = new THREE.Clock();
+
+const animate = () => {
+  const elapsedTime = clock.getElapsedTime();
+
+  // group.rotation.y = elapsedTime * Math.PI * 2;
+  // camera.position.y = Math.sin(elapsedTime);
+  // camera.position.x = Math.cos(elapsedTime);
+
+  // camera.lookAt(group.position);
+};
+
+const loop = (fn) => {
+  fn();
+
+  renderer.render(scene, camera);
+
+  window.requestAnimationFrame(loop.bind(undefined, fn));
+};
+
+loop(animate);
+
+gsap.to(group.position, {
+  x: 2,
+  duration: 1,
+  delay: 1,
+});
+
+gsap.to(group.position, {
+  x: 0,
+  duration: 1,
+  delay: 2,
+});
