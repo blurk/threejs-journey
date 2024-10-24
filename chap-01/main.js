@@ -1,30 +1,43 @@
 import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import gsap from "gsap";
+
+// Cursor
+const cursor = {
+  x: 0,
+  y: 0,
+};
+
+window.addEventListener("mousemove", (e) => {
+  const { clientX, clientY } = e;
+  cursor.x = clientX / sizes.width - 0.5;
+  cursor.y = (clientY / sizes.height - 0.5) * -1;
+});
 
 const canvas = document.getElementById("canvas");
 
 const scene = new THREE.Scene();
 
-const geometry = new THREE.BoxGeometry(1, 1, 1);
+const geometry = new THREE.BoxGeometry(1, 1, 1, 5, 5, 5);
 
 const material = new THREE.MeshBasicMaterial(
   /** @type {import("three").MeshBasicMaterialParameters} */
   { color: "red", wireframe: false }
 );
 const mesh = new THREE.Mesh(geometry, material);
-mesh.position.set(0.7, -0.6, 1);
-mesh.scale.set(2, 0.5, 0.5);
+// mesh.position.set(0.7, -0.6, 1);
+// mesh.scale.set(2, 0.5, 0.5);
 // Change rotation order
-mesh.rotation.reorder("YXZ");
-mesh.rotation.x = Math.PI * 0.25;
-mesh.rotation.y = Math.PI * 0.25;
-// scene.add(mesh);
+// mesh.rotation.reorder("YXZ");
+// mesh.rotation.x = Math.PI * 0.25;
+// mesh.rotation.y = Math.PI * 0.25;
+scene.add(mesh);
 
-const axisHelper = new THREE.AxesHelper(3);
-scene.add(axisHelper);
+// const axisHelper = new THREE.AxesHelper(3);
+// scene.add(axisHelper);
 
 const group = new THREE.Group();
-scene.add(group);
+// scene.add(group);
 
 const cube1 = new THREE.Mesh(
   new THREE.BoxGeometry(1, 1, 1),
@@ -46,12 +59,28 @@ cube3.position.x = -1.2;
 group.add(cube1, cube2, cube3);
 
 const sizes = {
-  width: 800,
-  height: 600,
+  width: window.innerWidth,
+  height: window.innerHeight,
 };
 
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
-camera.position.z = 7;
+const camera = new THREE.PerspectiveCamera(
+  75,
+  sizes.width / sizes.height,
+  0.1,
+  100
+);
+// const aspectRatio = sizes.width / sizes.height;
+// const camera = new THREE.OrthographicCamera(
+//   -1 * aspectRatio,
+//   1 * aspectRatio,
+//   1,
+//   -1,
+//   0.1,
+//   100
+// );
+// camera.position.x = 2;
+// camera.position.y = 2;
+camera.position.z = 2;
 scene.add(camera);
 
 // camera.lookAt(mesh.position);
@@ -61,6 +90,7 @@ const renderer = new THREE.WebGLRenderer(
 );
 
 renderer.setSize(sizes.width, sizes.height);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 renderer.render(scene, camera);
 
@@ -73,27 +103,65 @@ const animate = () => {
   // camera.position.y = Math.sin(elapsedTime);
   // camera.position.x = Math.cos(elapsedTime);
 
-  // camera.lookAt(group.position);
+  mesh.rotation.y = elapsedTime;
 };
 
-const loop = (fn) => {
-  fn();
+const orbitControls = new OrbitControls(camera, canvas);
+orbitControls.enableDamping = true;
+
+const updateCamera = () => {
+  // camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 3;
+  // camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3;
+  // camera.position.y = cursor.y * 6;
+  // camera.lookAt(mesh.position);
+
+  orbitControls.update();
+};
+
+window.addEventListener("resize", () => {
+  sizes.width = window.innerWidth;
+  sizes.height = window.innerHeight;
+
+  camera.aspect = sizes.width / sizes.height;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(sizes.width, sizes.height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+});
+
+window.addEventListener("dblclick", () => {
+  const fullscreenElement =
+    document.fullscreenElement || document.webkitFullscreenElement;
+
+  if (!fullscreenElement) {
+    if (canvas.requestFullscreen) {
+      canvas.requestFullscreen();
+    } else if (canvas.webkitRequestFullscreen) {
+      canvas.webkitRequestFullscreen();
+    }
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
+  }
+});
+
+const loop = (...fns) => {
+  fns.forEach((fn) => {
+    fn();
+  });
 
   renderer.render(scene, camera);
 
-  window.requestAnimationFrame(loop.bind(undefined, fn));
+  window.requestAnimationFrame(() => loop(...fns));
 };
 
-loop(animate);
+loop(updateCamera);
 
-gsap.to(group.position, {
-  x: 2,
-  duration: 1,
-  delay: 1,
-});
-
-gsap.to(group.position, {
-  x: 0,
-  duration: 1,
-  delay: 2,
-});
+// gsap.to(group.position, {
+//   x: 2,
+//   duration: 1,
+//   delay: 1,
+// });
