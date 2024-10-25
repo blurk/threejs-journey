@@ -18,13 +18,26 @@ const canvas = document.getElementById("canvas");
 
 const scene = new THREE.Scene();
 
-const geometry = new THREE.BoxGeometry(1, 1, 1, 5, 5, 5);
+// const geometry = new THREE.BoxGeometry(1, 1, 1, 4, 4, 4);
 
-const material = new THREE.MeshBasicMaterial(
-  /** @type {import("three").MeshBasicMaterialParameters} */
-  { color: "red", wireframe: false }
-);
-const mesh = new THREE.Mesh(geometry, material);
+const bufferGeometry = new THREE.BufferGeometry();
+const count = 5000;
+const positionsArray = new Float32Array(count * 3 * 3);
+
+for (let i = 0; i < positionsArray.length; i += 1) {
+  positionsArray[i] = Math.random() * Math.PI;
+}
+
+const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3);
+
+bufferGeometry.setAttribute("position", positionsAttribute);
+
+const material = new THREE.MeshBasicMaterial({
+  color: "#f00",
+  wireframe: true,
+});
+// const mesh = new THREE.Mesh(geometry, material);
+const mesh = new THREE.Mesh(bufferGeometry, material);
 // mesh.position.set(0.7, -0.6, 1);
 // mesh.scale.set(2, 0.5, 0.5);
 // Change rotation order
@@ -33,8 +46,8 @@ const mesh = new THREE.Mesh(geometry, material);
 // mesh.rotation.y = Math.PI * 0.25;
 scene.add(mesh);
 
-// const axisHelper = new THREE.AxesHelper(3);
-// scene.add(axisHelper);
+const axisHelper = new THREE.AxesHelper(3);
+scene.add(axisHelper);
 
 const group = new THREE.Group();
 // scene.add(group);
