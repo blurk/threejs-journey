@@ -1,6 +1,18 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import gsap from "gsap";
+import GUI from "lil-gui";
+
+const gui = new GUI({
+  width: 314,
+  title: "Debug",
+  closeFolders: true,
+});
+
+// gui.close();
+// gui.hide();
+
+const debugObject = {};
 
 // Cursor
 const cursor = {
@@ -18,26 +30,27 @@ const canvas = document.getElementById("canvas");
 
 const scene = new THREE.Scene();
 
-// const geometry = new THREE.BoxGeometry(1, 1, 1, 4, 4, 4);
+const geometry = new THREE.BoxGeometry(1, 1, 1, 4, 4, 4);
 
-const bufferGeometry = new THREE.BufferGeometry();
-const count = 5000;
-const positionsArray = new Float32Array(count * 3 * 3);
+// const bufferGeometry = new THREE.BufferGeometry();
+// const count = 5000;
+// const positionsArray = new Float32Array(count * 3 * 3);
 
-for (let i = 0; i < positionsArray.length; i += 1) {
-  positionsArray[i] = Math.random() * Math.PI;
-}
+// for (let i = 0; i < positionsArray.length; i += 1) {
+//   positionsArray[i] = Math.random() * Math.PI;
+// }
 
-const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3);
+// const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3);
 
-bufferGeometry.setAttribute("position", positionsAttribute);
+// bufferGeometry.setAttribute("position", positionsAttribute);
 
+debugObject.color = "#349edf";
 const material = new THREE.MeshBasicMaterial({
-  color: "#f00",
+  color: debugObject.color,
   wireframe: true,
 });
-// const mesh = new THREE.Mesh(geometry, material);
-const mesh = new THREE.Mesh(bufferGeometry, material);
+const mesh = new THREE.Mesh(geometry, material);
+// const mesh = new THREE.Mesh(bufferGeometry, material);
 // mesh.position.set(0.7, -0.6, 1);
 // mesh.scale.set(2, 0.5, 0.5);
 // Change rotation order
@@ -178,3 +191,33 @@ loop(updateCamera);
 //   duration: 1,
 //   delay: 1,
 // });
+
+const guiPosition = gui.addFolder("Position");
+
+guiPosition.add(mesh.position, "x").min(-3).max(3).step(0.01);
+guiPosition.add(mesh.position, "y").min(-3).max(3).step(0.01);
+guiPosition.add(mesh.position, "z").min(-3).max(3).step(0.01);
+
+gui.add(mesh.material, "wireframe");
+
+debugObject.spin = () => {
+  gsap.to(mesh.rotation, { duration: 4, y: mesh.rotation.y + Math.PI * 2 });
+};
+
+gui.addColor(debugObject, "color").onChange(function () {
+  mesh.material.color.set(debugObject.color);
+});
+
+gui.add(debugObject, "spin");
+
+debugObject.subdivision = 2;
+
+gui
+  .add(debugObject, "subdivision")
+  .min(1)
+  .max(20)
+  .step(1)
+  .onFinishChange((value) => {
+    mesh.geometry.dispose();
+    mesh.geometry = new THREE.BoxGeometry(1, 1, 1, value, value, value);
+  });
