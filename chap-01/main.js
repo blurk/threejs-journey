@@ -44,10 +44,61 @@ const geometry = new THREE.BoxGeometry(1, 1, 1, 4, 4, 4);
 
 // bufferGeometry.setAttribute("position", positionsAttribute);
 
+const loadingManager = new THREE.LoadingManager();
+loadingManager.onStart = () => {
+  console.log("onStart");
+};
+
+loadingManager.onLoad = () => {
+  console.log("onLoad");
+};
+
+loadingManager.onProgress = () => {
+  console.log("onProgress");
+};
+
+loadingManager.onError = () => {
+  console.log("onError");
+};
+
+const textureLoader = new THREE.TextureLoader(loadingManager);
+// const textureColor = textureLoader.load("/textures/door/color.jpg");
+const textureColor = textureLoader.load("/textures/minecraft.png");
+// const textureColor = textureLoader.load("/textures/checkerboard-8x8.png");
+// const textureColor = textureLoader.load("/textures/checkerboard-1024x1024.png"); // Make moire pattern with NearestFilter
+textureColor.colorSpace = THREE.SRGBColorSpace;
+const textureAlpha = textureLoader.load("/textures/door/alpha.jpg");
+const textureHeight = textureLoader.load("/textures/door/height.jpg");
+const textureNormal = textureLoader.load("/textures/door/normal.jpg");
+const textureAmbientOcclusion = textureLoader.load(
+  "/textures/door/ambientOcclusion.jpg"
+);
+const textureMetalness = textureLoader.load("/textures/door/metalness.jpg");
+const textureRoughness = textureLoader.load("/textures/door/roughness.jpg");
+
+// Texture transformation
+
+// textureColor.repeat.x = 2;
+// textureColor.repeat.y = 3;
+// textureColor.wrapS = THREE.MirroredRepeatWrapping;
+// textureColor.wrapT = THREE.MirroredRepeatWrapping;
+
+// textureColor.offset.x = 0.5;
+// textureColor.offset.y = 0.5;
+
+// textureColor.center.x = 0.5;
+// textureColor.center.y = 0.5;
+// textureColor.rotation = Math.PI * (1 / 40);
+
+textureColor.generateMipmaps = false;
+// textureColor.minFilter = THREE.NearestFilter; // Minification
+textureColor.magFilter = THREE.NearestFilter; // Magnification
+
 debugObject.color = "#349edf";
 const material = new THREE.MeshBasicMaterial({
-  color: debugObject.color,
-  wireframe: true,
+  // color: debugObject.color,
+  wireframe: false,
+  map: textureColor,
 });
 const mesh = new THREE.Mesh(geometry, material);
 // const mesh = new THREE.Mesh(bufferGeometry, material);
@@ -201,7 +252,7 @@ guiPosition.add(mesh.position, "z").min(-3).max(3).step(0.01);
 gui.add(mesh.material, "wireframe");
 
 debugObject.spin = () => {
-  gsap.to(mesh.rotation, { duration: 4, y: mesh.rotation.y + Math.PI * 2 });
+  gsap.to(mesh.rotation, { duration: 1, y: mesh.rotation.y + Math.PI * 2 });
 };
 
 gui.addColor(debugObject, "color").onChange(function () {
