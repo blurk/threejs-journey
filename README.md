@@ -4,6 +4,8 @@ Learn the ThreeJS journey course
 
 # Lesson 10
 
+- Textures, as you probably know, are images that will cover the surface of your geometries. Many types of textures can have different effects on the appearance of your geometry. It's not just about the color.
+
 - PBR:
   - Physically Based Rendering
   - It regroups many techniques that tend to follow real-life directions to get realistic results.
@@ -26,3 +28,10 @@ Learn the ThreeJS journey course
     - We haven't tested it yet, because we have other things to see first, but textures support transparency. As you may know, jpg files don't have an alpha channel, so you might prefer using a png.
     - Or you can use an alpha map, as we will see in a future lesson.
     - If you are using a normal texture (the purple one), you will probably want to have the exact values for each pixel's red, green, and blue channels, or you might end up with visual glitches. For that, you'll need to use a png because its lossless compression will preserve the values.
+
+# Lesson 11
+
+- Materials are used to put a color on each visible pixel of the geometries.
+- The algorithms that decide on the color of each pixel are written in programs called shaders. Writing shaders is one of the most challenging parts of WebGL and Three.js, but don't worry; Three.js has many built-in materials with pre-made shaders.
+
+- By default, you only get a two-part coloration (one for the shadow and one for the light). To add more steps to the coloration, you can use the gradientTexture we loaded at the start of the lesson on the gradientMap property: `material.gradientMap = gradientTexture`
