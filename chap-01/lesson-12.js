@@ -21,12 +21,13 @@ const scene = new THREE.Scene();
  */
 const textureLoader = new THREE.TextureLoader();
 
-const matcapTexture = textureLoader.load("/textures/matcaps/8.png");
+const matcapTexture = textureLoader.load("/textures/matcaps/3.png");
 matcapTexture.colorSpace = THREE.SRGBColorSpace;
 
 // const axisHelper = new THREE.AxesHelper();
 // scene.add(axisHelper);
-
+/** @type {THREE.Mesh[]} */
+let donuts = [];
 const fontLoader = new FontLoader();
 fontLoader.load(
   "/fonts/helvetiker_regular.typeface.json",
@@ -65,10 +66,9 @@ fontLoader.load(
     const text = new THREE.Mesh(textGeometry, material);
     scene.add(text);
 
-    console.time("Donuts");
-    const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 20, 45);
+    const donutGeometry = new THREE.SphereGeometry(0.01, 32, 16);
 
-    for (let i = 0; i < 340; i++) {
+    for (let i = 0; i < 1000; i++) {
       const donut = new THREE.Mesh(donutGeometry, material);
       donut.position.set(
         (Math.random() - 0.5) * 10,
@@ -81,9 +81,10 @@ fontLoader.load(
 
       const scale = Math.random();
       donut.scale.set(scale, scale, scale);
-      scene.add(donut);
+      donuts.push(donut);
     }
-    console.timeEnd("Donuts");
+
+    scene.add(...donuts);
   }
 );
 
@@ -142,8 +143,15 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
  */
 const clock = new THREE.Clock();
 
+const SPEED = 0.0001;
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
+
+  donuts.forEach((donut) => {
+    donut.translateX(Math.random() * SPEED);
+    donut.translateY(Math.random() * SPEED);
+    donut.translateZ(Math.random() * SPEED);
+  });
 
   // Update controls
   controls.update();
