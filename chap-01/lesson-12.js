@@ -1,5 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js";
+import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
 import GUI from "lil-gui";
 
 /**
@@ -19,15 +21,71 @@ const scene = new THREE.Scene();
  */
 const textureLoader = new THREE.TextureLoader();
 
-/**
- * Object
- */
-const cube = new THREE.Mesh(
-  new THREE.BoxGeometry(1, 1, 1),
-  new THREE.MeshBasicMaterial()
-);
+const matcapTexture = textureLoader.load("/textures/matcaps/8.png");
+matcapTexture.colorSpace = THREE.SRGBColorSpace;
 
-scene.add(cube);
+// const axisHelper = new THREE.AxesHelper();
+// scene.add(axisHelper);
+
+const fontLoader = new FontLoader();
+fontLoader.load(
+  "/fonts/helvetiker_regular.typeface.json",
+  function onLoad(font) {
+    console.log("font loaded");
+    const textGeometry = new TextGeometry("Wazzaap!", {
+      font,
+      size: 0.5,
+      depth: 0.2,
+      curveSegments: 5,
+      bevelEnabled: true,
+      bevelThickness: 0.03,
+      bevelSize: 0.02,
+      bevelOffset: 0,
+      bevelSegments: 4,
+    });
+
+    // textGeometry.computeBoundingBox();
+    // bevelSize for x and y
+    // bevelThichness for z
+    // textGeometry.translate(
+    //   -(textGeometry.boundingBox.max.x - 0.02) * 0.5,
+    //   -(textGeometry.boundingBox.max.y - 0.02) * 0.5,
+    //   -(textGeometry.boundingBox.max.z - 0.03) * 0.5
+    // );
+
+    textGeometry.center();
+
+    // const textMaterial = new THREE.MeshBasicMaterial({
+    //   wireframe: true,
+    // });
+
+    const material = new THREE.MeshMatcapMaterial({
+      matcap: matcapTexture,
+    });
+    const text = new THREE.Mesh(textGeometry, material);
+    scene.add(text);
+
+    console.time("Donuts");
+    const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 20, 45);
+
+    for (let i = 0; i < 340; i++) {
+      const donut = new THREE.Mesh(donutGeometry, material);
+      donut.position.set(
+        (Math.random() - 0.5) * 10,
+        (Math.random() - 0.5) * 10,
+        (Math.random() - 0.5) * 10
+      );
+
+      donut.rotateX(Math.random() * Math.PI);
+      donut.rotateY(Math.random() * Math.PI);
+
+      const scale = Math.random();
+      donut.scale.set(scale, scale, scale);
+      scene.add(donut);
+    }
+    console.timeEnd("Donuts");
+  }
+);
 
 /**
  * Sizes
