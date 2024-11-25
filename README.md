@@ -59,6 +59,6 @@ Learn the ThreeJS journey course
 
 - Baking:
 
-- A good technique for lighting is called baking.
-- The idea is that you bake the light into the texture. This can be done in a 3D software.
-- The downside is that, once the lighting is baked, we can't move the lights, because there are none and you'll probably need a lot of textures.
+  - A good technique for lighting is called baking.
+  - The idea is that you bake the light into the texture. This can be done in a 3D software.
+  - The downside is that, once the lighting is baked, we can't move the lights, because there are none and you'll probably need a lot of textures.
