@@ -53,10 +53,11 @@ Learn the ThreeJS journey course
   - PointLight
 
 - High cost:
+
   - SpotLight
   - RectAreaLight
 
--Baking:
+- Baking:
 
 - A good technique for lighting is called baking.
 - The idea is that you bake the light into the texture. This can be done in a 3D software.
