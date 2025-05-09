@@ -459,6 +459,8 @@ const tick = () => {
     Math.cos(ghost3Angle * Math.PI) *
     Math.cos(ghost3Angle * Math.E);
 
+  doorLight.intensity = Math.random() > 0.5 ? 1 : 0.5;
+
   // Update controls
   controls.update();
 
