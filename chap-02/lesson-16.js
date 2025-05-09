@@ -429,6 +429,10 @@ scene.fog = new THREE.FogExp2("#02343f", 0.1);
  */
 const timer = new Timer();
 
+const minIntensity = 0; // Minimum intensity of the flicker
+const maxIntensity = 5; // Maximum intensity of the flicker
+const flickerSpeed = 0.05; // How quickly the intensity changes (in seconds)
+
 const tick = () => {
   // Timer
   timer.update();
@@ -459,7 +463,14 @@ const tick = () => {
     Math.cos(ghost3Angle * Math.PI) *
     Math.cos(ghost3Angle * Math.E);
 
-  doorLight.intensity = Math.random() > 0.5 ? 1 : 0.5;
+  const intensity =
+    minIntensity +
+    Math.sin(elapsedTime * (1 / flickerSpeed)) *
+      0.5 *
+      (maxIntensity - minIntensity);
+
+  // Apply the new intensity to the light
+  doorLight.intensity = Math.abs(intensity); // Use Math.abs to ensure intensity is positive
 
   // Update controls
   controls.update();
